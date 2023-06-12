@@ -5,9 +5,30 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite App</title>
+    <script type="module">
+      import { turn } from './main.js';
+  
+      window.handleClick = function handleClick(index) {
+        turn(index);
+      }
+    </script>
   </head>
   <body>
     <canvas id="bg"></canvas>
-    <script type="module" src="/main.js"></script>
+    <button onclick="handleClick(0)" style="top: 0px;">-></button>
+    <button onclick="handleClick(1)" style="top: 20px;">-></button>
+    <button onclick="handleClick(2)" style="top: 40px;">-></button>
+    <button onclick="handleClick(3)" style="top: 60px;">-></button>
+    <button onclick="handleClick(4)" style="top: 80px;">-></button>
+    <button onclick="handleClick(5)" style="top: 100px;">-></button>
+    <script type="module">
+      import './main.js';
+    </script>
   </body>
 </html>
+
+
+
+
+
+

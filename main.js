@@ -26,12 +26,17 @@ controls.update();
 renderer.render(scene, camera);
 cube.add();
 
+
 function animate() {
   requestAnimationFrame(animate);
 
   controls.update();
-
+  
   renderer.render(scene, camera);
 }
 
 animate();
+
+export function turn(index) {
+  cube.turn(index);
+}
