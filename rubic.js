@@ -9,12 +9,14 @@ export default class cube {
         this.sides = sides;
         this.outline = {
             size: outline,
-            pieces: []
+            pieces: [],
+            showing: true,
         };
         this.cube = [];
         this.colors = [];
         this.squareSize = size/rows;
         this.pieces = [];
+        this.changePiecesLater = [];
         for (let i = 0; i < sides; i++) {
             this.colors.push(colors[i]);
             this.cube.push([])
@@ -36,7 +38,7 @@ export default class cube {
                     piece.position.x = (i - 1) * (this.squareSize + outline/2); 
                     piece.position.y = (j - 1) * (this.squareSize + outline/2); 
                     piece.position.z = (k - 1) * (this.squareSize + outline/2); 
-                    // this.outline.pieces.push(piece);
+                    this.outline.pieces.push(piece);
                 }
             }
         }
@@ -80,7 +82,7 @@ export default class cube {
     addToPieces(x, y, z, side, row, col) {
         for (let i = 0; i < this.pieces.length; i++) {
             if(this.pieces[i].position.x == x && this.pieces[i].position.y == y && this.pieces[i].position.z == z) {
-                this.pieces[i].pieces.push({side: side, row: row, col: col});
+                this.pieces[i].pieces.push({side: side, row: row, col: col, id: this.cube[side][row][col].id});
                 return ;
             }
         }
@@ -88,7 +90,8 @@ export default class cube {
             pieces: [{
                 side: side, 
                 row: row, 
-                col: col
+                col: col,
+                id: this.cube[side][row][col].id
             }],
             position: {
                 x: x,
@@ -97,17 +100,17 @@ export default class cube {
             }
         });
     }
-    turn(side) {
+    turn(side, dir) {
         const sidePieces = [this.findPiece(side, 0, 1), this.findPiece(side, 1, 0), this.findPiece(side, 1, 2), this.findPiece(side, 2, 1)];
         const cornerPieces = [this.findPiece(side, 0, 0), this.findPiece(side, 2, 0), this.findPiece(side, 0, 2), this.findPiece(side, 2, 2)];
+        console.log(dir)
         // console.log(this.copyPiece(sidePieces[2]))
         // console.log(sidePieces[1]);
         // this.movePiece(sidePieces[1], this.copyPiece(sidePieces[2]));
         // this.movePieces(sidePieces[2], sidePieces[3]);
-        this.movePieces(sidePieces[0], sidePieces[1], sidePieces[2], sidePieces[3]);
-        this.movePieces(cornerPieces[0], cornerPieces[1], cornerPieces[2], cornerPieces[3]);
-
-
+        this.movePieces(sidePieces[0], sidePieces[1], sidePieces[2], sidePieces[3], dir);
+        this.movePieces(cornerPieces[0], cornerPieces[1], cornerPieces[2], cornerPieces[3], dir);
+        this.changePieces();
     }
     copyPiece(pieceObj) {
         var piece = [];
@@ -119,6 +122,9 @@ export default class cube {
     }
     copySquare(side, row, col) {
         return {
+            side: side,
+            row: row,
+            col: col,
             position: {
                 x: this.cube[side][row][col].piece.position.x,
                 y: this.cube[side][row][col].piece.position.y,
@@ -130,16 +136,25 @@ export default class cube {
             }
         }
     }
-    movePieces(pieceObj1, pieceObj2, pieceObj3, pieceObj4) {
+    movePieces(pieceObj1, pieceObj2, pieceObj3, pieceObj4, dir) {
         var newPiece1 = this.copyPiece(pieceObj1);
         var newPiece2 = this.copyPiece(pieceObj2);
         var newPiece3 = this.copyPiece(pieceObj3);
         var newPiece4 = this.copyPiece(pieceObj4);
         //----
-        this.movePiece(pieceObj2, newPiece1);
-        this.movePiece(pieceObj3, newPiece4);
-        this.movePiece(pieceObj4, newPiece2);
-        this.movePiece(pieceObj1, newPiece3);
+        console.log(dir)
+        if(dir == 1) {
+            this.movePiece(pieceObj2, newPiece1);
+            this.movePiece(pieceObj3, newPiece4);
+            this.movePiece(pieceObj4, newPiece2);
+            this.movePiece(pieceObj1, newPiece3);
+        }
+        else {
+            this.movePiece(pieceObj1, newPiece2);
+            this.movePiece(pieceObj4, newPiece3);
+            this.movePiece(pieceObj2, newPiece4);
+            this.movePiece(pieceObj3, newPiece1);
+        }
     }
     movePiece(pieceObj, newPiece) {
         for (let i = 0; i < pieceObj.length; i++) {
@@ -154,7 +169,18 @@ export default class cube {
             piece.position.z = newPiece[i].position.z;
             piece.rotation.x = newPiece[i].rotation.x;
             piece.rotation.y = newPiece[i].rotation.y;
-            
+            this.changePiecesLater.push({
+                org: { side: newPiece[i].side, row: newPiece[i].row, col: newPiece[i].col },
+                new: { ...this.cube[pieceObj[i].side][pieceObj[i].row][pieceObj[i].col].piece }
+            })
+            // this.cube[pieceObj[i].side][pieceObj[i].row][pieceObj[i].col].piece = this.cube[newPiece[i].side][newPiece[i].row][newPiece[i].col].piece;
+        }
+    }
+    changePieces() {
+        while(this.changePiecesLater.length > 0) {
+            const p = this.changePiecesLater[0];
+            this.cube[p.org.side][p.org.row][p.org.col].piece = p.new;
+            this.changePiecesLater.splice(0, 1);
         }
     }
     moveSqaure(piece, newPiece) {
@@ -179,6 +205,23 @@ export default class cube {
                     }
                 }
             }
+        }
+    }
+    changeFill() {
+        console.log("yo")
+        if(!this.outline.showing) {
+            for (let i = 0; i < this.outline.pieces.length; i++) {
+                const outline = this.outline.pieces[i];
+                scene.add(outline);
+            }
+            this.outline.showing = true;
+        }
+        else {
+            for (let i = 0; i < this.outline.pieces.length; i++) {
+                const outline = this.outline.pieces[i];
+                scene.remove(outline);
+            }
+            this.outline.showing = false;
         }
     }
 }

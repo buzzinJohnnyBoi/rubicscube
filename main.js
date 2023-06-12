@@ -37,6 +37,10 @@ function animate() {
 
 animate();
 
-export function turn(index) {
-  cube.turn(index);
+export function turn(index, dir) {
+  cube.turn(index, dir);
+}
+
+export function changeFill() {
+  cube.changeFill();
 }

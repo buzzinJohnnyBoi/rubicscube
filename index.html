@@ -6,21 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite App</title>
     <script type="module">
-      import { turn } from './main.js';
+      import { turn, changeFill} from './main.js';
   
-      window.handleClick = function handleClick(index) {
-        turn(index);
+      window.handleClick = function handleClick(index, dir) {
+        turn(index, dir);
+      }
+      window.changeFill = () => {
+        changeFill();
       }
     </script>
   </head>
   <body>
     <canvas id="bg"></canvas>
-    <button onclick="handleClick(0)" style="top: 0px;">-></button>
-    <button onclick="handleClick(1)" style="top: 20px;">-></button>
-    <button onclick="handleClick(2)" style="top: 40px;">-></button>
-    <button onclick="handleClick(3)" style="top: 60px;">-></button>
-    <button onclick="handleClick(4)" style="top: 80px;">-></button>
-    <button onclick="handleClick(5)" style="top: 100px;">-></button>
+    <button onclick="handleClick(0, 1)" style="left: 60px; background-color: blue; top: 0px;">right</button><button onclick="handleClick(0, -1)" style="background-color: blue; top: 0px;">left</button>
+    <button onclick="handleClick(1, 1)" style="left: 60px; background-color: red; top: 20px;">right</button><button onclick="handleClick(1, -1)" style="background-color: red; top: 20px;">left</button>
+    <button onclick="handleClick(2, 1)" style="left: 60px; background-color: white; top: 40px;">right</button><button onclick="handleClick(2, -1)" style="background-color: white; top: 40px;">left</button>
+    <button onclick="handleClick(3, 1)" style="left: 60px; background-color: green; top: 60px;">right</button><button onclick="handleClick(3, -1)" style="background-color: green; top: 60px;">left</button>
+    <button onclick="handleClick(4, 1)" style="left: 60px; background-color: orange; top: 80px;">right</button><button onclick="handleClick(4, -1)" style="background-color: orange; top: 80px;">left</button>
+    <button onclick="handleClick(5, 1)" style="left: 60px; background-color: yellow; top: 100px;">right</button><button onclick="handleClick(5, -1)" style="background-color: yellow; top: 100px;">left</button>
+    <button onclick="changeFill()" style="top: 120px;">Change fill</button>
     <script type="module">
       import './main.js';
     </script>
